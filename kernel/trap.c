@@ -65,9 +65,11 @@ usertrap(void) {
     } else if ((which_dev = devintr()) != 0) {
         // ok
     }else {
-        if ((r_scause() == 13 || r_scause() == 15) && isPageFault(r_stval())) {
+        if ((r_scause() == 13 || r_scause() == 15) ) {
             // read/write page fault
-            allocMapPage(r_stval());
+            if(isHeapPageFault(r_stval())){
+                allocMapPage(r_stval());
+            }
         } else {
             printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
             printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
@@ -103,7 +105,7 @@ void allocMapPage(uint64 va){
 }
 
 // 判断va是否产生了page fault
-int isPageFault(uint64 va){
+int isHeapPageFault(uint64 va){
     struct proc *p=myproc();
     // 处于guard page，xv6规定不能产生page fault
     if(PGROUNDDOWN(va)== PGROUNDDOWN(r_sp())-PGSIZE) return 0;

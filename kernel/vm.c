@@ -342,7 +342,7 @@ uvmclear(pagetable_t pagetable, uint64 va) {
 int
 copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len) {
     uint64 n, va0, pa0;
-    if (isPageFault(dstva)) {
+    if (isHeapPageFault(dstva)) {
         allocMapPage(dstva);
     }
     while (len > 0) {
@@ -368,7 +368,7 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len) {
 int
 copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len) {
     uint64 n, va0, pa0;
-    if (isPageFault(srcva)) {
+    if (isHeapPageFault(srcva)) {
         allocMapPage(srcva);
     }
     while (len > 0) {
